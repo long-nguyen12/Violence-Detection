@@ -214,7 +214,7 @@ def colorstr(*input):
 
 
 def labels_to_class_weights(labels, nc=80):
-    # Get class weights (inverse frequency) from training labels
+    # Get class weights (inverse frequency) ing labels
     if labels[0] is None:  # no labels loaded
         return torch.Tensor()
 

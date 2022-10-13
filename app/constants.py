@@ -1,5 +1,6 @@
 class Constants():
     IMAGE_FILES = 'images/'
+    PUBLIC_FOLDER = "./public/files/"
 
 
 constants = Constants()
