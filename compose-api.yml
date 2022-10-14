@@ -1,0 +1,16 @@
+version: "3.2"
+services:
+  api:
+    image: "violence_dectection_docker"
+    ports:
+      - target: 8008
+        published: 8007
+        mode: host
+    environment:
+      PORT: 8008
+    volumes:
+      - "uploads:/usr/src/app/public/files"
+
+volumes:
+  uploads:
+    driver: local

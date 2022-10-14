@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:Long.121100@localhost:3306/violence_detection"
+SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:root@192.168.1.54:3307/violence_detection"
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL

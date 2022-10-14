@@ -68,7 +68,7 @@ async def get_camera(camera_id: str, sess: Session = Depends(get_db)):
     return {"camera": camera}
 
 
-@control_camera.put("/backend/api/camera/")
+@control_camera.put("/backend/api/camera/{id}")
 async def get_by_date(id: str, new_camera: CameraSchema, sess: Session = Depends(get_db)):
     camera = sess.query(Camera).filter(Camera.idcameras == id).first()
     if not camera:

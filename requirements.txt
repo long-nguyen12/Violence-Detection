@@ -12,6 +12,7 @@ pydantic
 aiofiles
 cryptography
 fastapi-pagination
+requests_toolbelt
 # Base ----------------------------------------
 matplotlib>=3.2.2
 numpy>=1.18.5
