@@ -1,7 +1,7 @@
 import os
 import threading
 from app.constants import Constants
-from app.controllers import camera_controller, notification_controller
+from app.controllers import camera_controller, notification_controller, auth_controller
 from detect import YoloDetect
 from fastapi import FastAPI, Depends
 import uvicorn
@@ -27,6 +27,7 @@ def root():
 
 app.include_router(camera_controller.control_camera)
 app.include_router(notification_controller.control_notification)
+app.include_router(auth_controller.control_auth)
 
 
 class DetectionTask(threading.Thread):

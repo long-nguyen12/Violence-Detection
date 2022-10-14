@@ -13,6 +13,9 @@ aiofiles
 cryptography
 fastapi-pagination
 requests_toolbelt
+python-jose
+passlib
+Werkzeug
 # Base ----------------------------------------
 matplotlib>=3.2.2
 numpy>=1.18.5
