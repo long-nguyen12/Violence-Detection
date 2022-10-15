@@ -38,7 +38,7 @@ class DetectionTask(threading.Thread):
     def run(self, *args, **kwargs, ):
         # cap = cv2.VideoCapture(
         #     'rtsp://admin:Admin12345@tronghau7.kbvision.tv:37779/cam/realmonitor?channel=1&subtype=0', cv2.CAP_FFMPEG)
-        cap = cv2.VideoCapture('D:/Work/datasets/_datasets/Vat_nhau_danh_nhau/2881825290563252032.mp4')
+        cap = cv2.VideoCapture(0)
         try:
             while True:
                 success, frame = cap.read()
@@ -54,10 +54,10 @@ class DetectionTask(threading.Thread):
             cv2.destroyAllWindows()
 
 
-# @app.on_event("startup")
-# async def startup_event():
-#     t = DetectionTask()
-#     t.start()
+@app.on_event("startup")
+async def startup_event():
+    t = DetectionTask()
+    t.start()
 
 if __name__ == "__main__":
 
