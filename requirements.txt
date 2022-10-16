@@ -16,6 +16,7 @@ requests_toolbelt
 python-jose
 passlib
 Werkzeug
+PyJWT
 # Base ----------------------------------------
 matplotlib>=3.2.2
 numpy>=1.18.5
