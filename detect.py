@@ -60,6 +60,7 @@ class YoloDetect():
 
         if self.half:
             self.model.half()
+        self.count_violence_frame = 0
 
     def alert(self, img):
         if (self.last_alert is None) or (
@@ -124,12 +125,18 @@ class YoloDetect():
             if len(det):
                 det[:, :4] = scale_coords(
                     img.shape[2:], det[:, :4], im0.shape).round()
-
+                
+                for c in det[:, -1].unique():
+                    if int(c) > 0:
+                        self.count_violence_frame += 1
+                    
                 for *xyxy, conf, cls in reversed(det):
                     label = f'{names[int(cls)]} {conf:.2f}'
                     plot_one_box(xyxy, im0, label=label,
                                  color=colors[int(cls)], line_thickness=3)
-        self.alert(im0)
+        if self.count_violence_frame == 30:
+            self.alert(im0)
+            self.count_violence_frame = 0
         return im0, len(det) > 0
 
 
