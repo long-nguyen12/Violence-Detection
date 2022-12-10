@@ -1,5 +1,5 @@
 test_images/
-
+preprocessing/
 # Repo-specific GitIgnore ----------------------------------------------------------------------------------------------
 *.jpg
 *.jpeg
