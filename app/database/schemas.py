@@ -46,3 +46,12 @@ class NotificationSchema(BaseModel):
 
     class Config:
         orm_mode = True
+
+class VideoSchema(BaseModel):
+    image_path: str
+    video_path: str
+    create_at: datetime
+    id_video: int
+
+    class Config:
+        orm_mode = True

@@ -1,7 +1,7 @@
 import os
 import threading
 from app.constants import Constants
-from app.controllers import camera_controller, notification_controller, auth_controller
+from app.controllers import camera_controller, notification_controller, auth_controller, video_controller
 from detect import YoloDetect
 from fastapi import FastAPI, Depends
 import uvicorn
@@ -28,6 +28,7 @@ def root():
 app.include_router(camera_controller.control_camera)
 app.include_router(notification_controller.control_notification)
 app.include_router(auth_controller.control_auth)
+app.include_router(video_controller.control_video)
 
 
 class DetectionTask(threading.Thread):
@@ -36,8 +37,6 @@ class DetectionTask(threading.Thread):
         self.model = YoloDetect()
 
     def run(self, *args, **kwargs, ):
-        # cap = cv2.VideoCapture(
-        #     'rtsp://admin:Admin12345@tronghau7.kbvision.tv:37779/cam/realmonitor?channel=1&subtype=0', cv2.CAP_FFMPEG)
         cap = cv2.VideoCapture(0)
         try:
             while True:
@@ -54,11 +53,14 @@ class DetectionTask(threading.Thread):
             cv2.destroyAllWindows()
 
 
-@app.on_event("startup")
-async def startup_event():
-    t = DetectionTask()
-    t.start()
+# @app.on_event("startup")
+# async def startup_event():
+#     t = DetectionTask()
+#     t.start()
 
 if __name__ == "__main__":
 
     uvicorn.run("main:app", host="0.0.0.0", port=8008, reload=True)
+
+
+# python detect_video.py --weights weights/best.pt --conf 0.6 --img-size 640 --source D:/Coding/datasets/datasets/WIN_20221213_08_31_00_Pro.mp4
