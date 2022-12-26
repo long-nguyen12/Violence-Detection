@@ -17,6 +17,7 @@ from pathlib import Path
 from app.constants import *
 import aiofiles
 from fastapi_pagination import Page, add_pagination, paginate, Params
+import ctypes
 
 import threading
 from fastapi.concurrency import run_in_threadpool
@@ -39,14 +40,21 @@ def get_db():
 
 class DetectionTask(threading.Thread):
     def __init__(self, url):
+        self._stop_event = threading.Event()
+
         threading.Thread.__init__(self)
+        
         self.model = YoloDetect()
         self.url = url
+        self._stop_event = threading.Event()
+        self.stop_thread = False
 
-    def run(self, *args, **kwargs, ):
+    def run(self, *args, **kwargs):
         cap = cv2.VideoCapture(self.url)
         try:
             while True:
+                if self.stop_thread:
+                    break
                 success, frame = cap.read()
                 if not success:
                     break
@@ -58,7 +66,13 @@ class DetectionTask(threading.Thread):
         finally:
             cap.release()
             cv2.destroyAllWindows()
+            
+    def stop(self):
+        self.stop_thread = True
 
+    def stopped(self):
+        return self._stop_event.set()
+            
 @control_video.post("/backend/api/video")
 async def create(file: Union[UploadFile, None] = None, sess: Session = Depends(get_db)):
     print(file)
@@ -133,13 +147,13 @@ async def stream_video(id: str, websocket: WebSocket, sess: Session = Depends(ge
             if not success:
                 break
             else:
-                # t = DetectionTask(frame)
-                # frame = t.run()
                 # frame, _ = model.detect_image(frame)
                 ret, buffer = cv2.imencode('.jpg', frame)
                 await websocket.send_bytes(buffer.tobytes())
                 data = await run_in_threadpool(lambda: websocket.receive_text())
                 if data == "DISCONNECT":
+                    t.stop()
+                    t.join()
                     break
     except WebSocketDisconnect:
         print("Client disconnected")
@@ -148,5 +162,7 @@ async def stream_video(id: str, websocket: WebSocket, sess: Session = Depends(ge
         print(e)
         pass
     finally:
+        t.stop()
+        t.join()
         cap.release()
         cv2.destroyAllWindows()
