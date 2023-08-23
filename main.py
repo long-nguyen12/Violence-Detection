@@ -43,7 +43,10 @@ class DetectionTask(threading.Thread):
         self.lastest = 0
 
     def run(self, *args, **kwargs, ):
+<<<<<<< HEAD
         # cap = cv2.VideoCapture('', cv2.CAP_FFMPEG)
+=======
+>>>>>>> main
         cap = cv2.VideoCapture(0)
         try:
             while True:
