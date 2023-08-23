@@ -16,7 +16,7 @@ from app.database.schemas import *
 from pathlib import Path
 from app.constants import *
 import aiofiles
-from fastapi_pagination import Page, add_pagination, paginate, Params
+from fastapi_pagination import Page, add_pagination, Params, paginate
 
 control_notification = APIRouter()
 
@@ -34,7 +34,6 @@ def get_db():
 
 @control_notification.post("/backend/api/notification")
 async def create(file: Union[UploadFile, None] = None, sess: Session = Depends(get_db)):
-    print(file)
     if not file:
         raise HTTPException(status_code=404, detail="Image not found")
     elif not file.filename.lower().endswith(('.png', '.jpg', '.jpeg', '.tiff', '.bmp', '.gif')):
@@ -55,23 +54,25 @@ async def create(file: Union[UploadFile, None] = None, sess: Session = Depends(g
             sess.commit()
             sess.refresh(noti)
             return {"noti": noti}
-        except:
+        except Exception as e:
+            print(e)
             raise HTTPException(status_code=500)
 
 
 @control_notification.get("/backend/api/notification", response_model=Page[NotificationSchema])
-async def get_nitifications(params: Params = Depends(), sess: Session = Depends(get_db)):
-    noti = sess.query(Notification).all()
+async def get_notifications(params: Params = Depends(), sess: Session = Depends(get_db)):
+    noti = sess.query(Notification).order_by(Notification.create_at.desc()).all()
     if not noti:
         raise HTTPException(status_code=404, detail="Not found")
-    noti = noti[::-1]
-    return paginate(noti, params)
+    notifications_page = paginate(noti, params)
+    return notifications_page
 
 
 @control_notification.put("/backend/api/notification/{notification_id}")
 async def update_notification(notification_id: str, sess: Session = Depends(get_db)):
     noti = sess.query(Notification).filter(
         Notification.id_notification == notification_id).first()
+    
     if not noti:
         raise HTTPException(status_code=404, detail="Not found")
     noti.confirmed = 1

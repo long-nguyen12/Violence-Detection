@@ -37,3 +37,12 @@ class Notification(Base):
     image = Column(VARCHAR)
     create_at = Column(Date)
     confirmed = Column(Integer)
+
+
+class Video(Base):
+    __tablename__ = "videos"
+
+    idvideos = Column(Integer, primary_key=True, index=True)
+    video_path = Column(VARCHAR)
+    video_detection_path = Column(VARCHAR)
+    create_at = Column(Date)

@@ -1,7 +1,6 @@
 from cmath import log
 from decimal import Decimal
 import os
-from app.telegram_utils import send_telegram
 from detect import YoloDetect
 from fastapi import Request, Response, Body, APIRouter, File, UploadFile, Depends, WebSocket, HTTPException
 from app.database.models import *

@@ -1,7 +1,7 @@
 import os
 import threading
 from app.constants import Constants
-from app.controllers import camera_controller, notification_controller, auth_controller
+from app.controllers import camera_controller, notification_controller, auth_controller, video_controller
 from detect import YoloDetect
 from fastapi import FastAPI, Depends
 import uvicorn
@@ -9,13 +9,17 @@ from app.database.database import engine, SessionLocal
 from app.database import models
 from fastapi.staticfiles import StaticFiles
 import cv2
+from fastapi_pagination import Page, add_pagination, paginate
+
 models.Base.metadata.create_all(bind=engine)
 
-
 app = FastAPI()
+add_pagination(app)
+
 if not os.path.exists(Constants.PUBLIC_FOLDER):
     os.makedirs(Constants.PUBLIC_FOLDER)
 app.mount("/static", StaticFiles(directory=Constants.PUBLIC_FOLDER), name="static")
+app.mount("/detection", StaticFiles(directory=Constants.DETECTION_FOLDER), name="detection")
 
 
 @app.get("/")
@@ -28,16 +32,18 @@ def root():
 app.include_router(camera_controller.control_camera)
 app.include_router(notification_controller.control_notification)
 app.include_router(auth_controller.control_auth)
+app.include_router(video_controller.control_video)
 
 
 class DetectionTask(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         self.model = YoloDetect()
+        self.current = 0
+        self.lastest = 0
 
     def run(self, *args, **kwargs, ):
-        # cap = cv2.VideoCapture(
-        #     'rtsp://admin:Admin12345@tronghau7.kbvision.tv:37779/cam/realmonitor?channel=1&subtype=0', cv2.CAP_FFMPEG)
+        # cap = cv2.VideoCapture('', cv2.CAP_FFMPEG)
         cap = cv2.VideoCapture(0)
         try:
             while True:
@@ -45,7 +51,7 @@ class DetectionTask(threading.Thread):
                 if not success:
                     break
                 else:
-                    img, _ = self.model.detect_image(frame)
+                    img, attr = self.model.detect_image(frame)
         except Exception as e:
             print(e)
             pass
@@ -54,10 +60,10 @@ class DetectionTask(threading.Thread):
             cv2.destroyAllWindows()
 
 
-@app.on_event("startup")
-async def startup_event():
-    t = DetectionTask()
-    t.start()
+# @app.on_event("startup")
+# async def startup_event():
+#     t = DetectionTask()
+#     t.start()
 
 if __name__ == "__main__":
 
