@@ -44,11 +44,8 @@ class YoloDetect():
         self.conf_thres = 0.6
         self.iou_thres = 0.5
         self.augment = None
-<<<<<<< HEAD
+        
         self.weights, self.imgsz, self.trace = 'weights/best_1.pt', 640, not False
-=======
-        self.weights, self.imgsz, self.trace = 'weights/best.pt', 640, not False
->>>>>>> main
 
         self.device = select_device('cpu')
         self.half = self.device.type != 'cpu'
@@ -88,7 +85,7 @@ class YoloDetect():
             # print(response)
             # thread.start()
             # thread.join()
-=======
+
             thread = threading.Thread(target=send_telegram, args=[save_path])
             multipart_data = MultipartEncoder(
                 fields={
@@ -102,7 +99,6 @@ class YoloDetect():
             except Exception as e:
                 pass
             thread.start()
->>>>>>> main
         return img
 
     def detect_image(self, img):
@@ -163,11 +159,6 @@ class YoloDetect():
             cv2.imwrite(alert_image, im0)
             send_telegram(alert_image)
             self.extracted_image.append({'img': file_name, 'time': iso_date})
-            # self.alert(im0)
-=======
-        if self.count_violence_frame == 5:
-            self.alert(im0)
->>>>>>> main
             self.count_violence_frame = 0
         return im0, self.extracted_image
 
